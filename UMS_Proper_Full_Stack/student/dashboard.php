@@ -1,0 +1,10 @@
+<?php
+require_once "../includes/auth.php"; require_login("student"); require_once "../config/db.php";
+$id=$_SESSION["user"]["id"];$courses=$conn->query("SELECT * FROM courses ORDER BY course_code");$notices=$conn->query("SELECT * FROM notices ORDER BY created_at DESC LIMIT 5");
+$att=$conn->query("SELECT COUNT(*) total,SUM(status='Present') present FROM attendance WHERE student_id=$id")->fetch_assoc();$attendance=$att["total"]?round(($att["present"]/$att["total"])*100):0;
+$page_title="Student Dashboard";$css_path="../assets/css/style.css";$js_path="../assets/js/main.js";require "../includes/header.php";
+?>
+<div class="dashboard"><aside class="sidebar"><?php include "sidebar.php"; ?></aside><main class="dash-main"><div class="dash-top"><div><span class="eyebrow">STUDENT PORTAL</span><h1>Hello, <?=e($_SESSION["user"]["name"])?> 👋</h1><p class="muted">Here is your academic overview.</p></div><div class="avatar">S</div></div>
+<div class="stat-cards"><div class="dash-stat"><small>CGPA</small><strong>3.85</strong><span>Current record</span></div><div class="dash-stat"><small>Attendance</small><strong><?=$attendance?>%</strong><span>Based on records</span></div><div class="dash-stat"><small>Credits</small><strong>96</strong><span>Completed</span></div></div>
+<div class="two-col"><div class="panel"><h2>Available Courses</h2><?php while($c=$courses->fetch_assoc()):?><div class="course-row"><span><?=e($c["course_code"])?></span><div><b><?=e($c["course_name"])?></b><small><?=$c["credit"]?> credits</small></div></div><?php endwhile;?></div><div class="panel"><h2>Latest Notices</h2><?php while($n=$notices->fetch_assoc()):?><div class="notice-item"><b><?=e($n["title"])?></b><p><?=e(mb_strimwidth($n["body"],0,100,"..."))?></p></div><?php endwhile;?></div></div>
+</main></div><?php require "../includes/footer.php"; ?>

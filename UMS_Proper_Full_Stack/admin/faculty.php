@@ -1,0 +1,10 @@
+<?php
+require_once "../includes/auth.php"; require_login("admin"); require_once "../config/db.php";
+$msg="";
+if(isset($_POST["add_faculty"])){ $name=trim($_POST["name"]);$email=trim($_POST["email"]);$dept=(int)$_POST["department_id"];$fid=trim($_POST["faculty_id"]);$pass=password_hash($_POST["password"],PASSWORD_DEFAULT);$stmt=$conn->prepare("INSERT INTO users(full_name,email,password,role,faculty_id,department_id) VALUES(?,?,?,'faculty',?,?)");$stmt->bind_param("ssssi",$name,$email,$pass,$fid,$dept);$msg=$stmt->execute()?"Faculty added successfully.":"Could not add faculty."; }
+$deps=$conn->query("SELECT * FROM departments ORDER BY name");$rows=$conn->query("SELECT u.*,d.name department FROM users u LEFT JOIN departments d ON u.department_id=d.id WHERE u.role='faculty' ORDER BY u.id DESC");
+$page_title="Faculty";$css_path="../assets/css/style.css";$js_path="../assets/js/main.js";require "../includes/header.php";
+?>
+<div class="dashboard"><aside class="sidebar"><?php include "sidebar.php"; ?></aside><main class="dash-main"><h1>Faculty Management</h1><?php if($msg):?><div class="alert success"><?=e($msg)?></div><?php endif;?>
+<div class="panel"><h2>Add Faculty</h2><form method="POST" class="form-grid"><input name="name" placeholder="Full name" required><input name="faculty_id" placeholder="Faculty ID" required><input type="email" name="email" placeholder="Email" required><select name="department_id" required><option value="">Select department</option><?php while($d=$deps->fetch_assoc()):?><option value="<?=$d["id"]?>"><?=e($d["name"])?></option><?php endwhile;?></select><input type="password" name="password" placeholder="Initial password" required><button name="add_faculty" class="btn btn-primary">Add Faculty</button></form></div>
+<div class="panel"><h2>Faculty List</h2><div class="table-wrap"><table><tr><th>ID</th><th>Name</th><th>Email</th><th>Department</th></tr><?php while($r=$rows->fetch_assoc()):?><tr><td><?=e($r["faculty_id"])?></td><td><?=e($r["full_name"])?></td><td><?=e($r["email"])?></td><td><?=e($r["department"]??"—")?></td></tr><?php endwhile;?></table></div></div></main></div><?php require "../includes/footer.php"; ?>

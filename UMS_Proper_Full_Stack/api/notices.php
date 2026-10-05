@@ -1,0 +1,1 @@
+<?php require_once "../config/db.php"; header("Content-Type: application/json"); $r=$conn->query("SELECT id,title,body,created_at FROM notices ORDER BY created_at DESC");$data=[];while($x=$r->fetch_assoc())$data[]=$x;echo json_encode($data);?>

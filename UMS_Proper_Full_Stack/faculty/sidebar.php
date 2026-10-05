@@ -1,0 +1,2 @@
+<a class="brand" href="../index.php"><span class="brand-mark">U</span>UniSphere</a>
+<a href="dashboard.php">▦ Dashboard</a><a href="courses.php">▤ My Courses</a><a href="attendance.php">✓ Attendance</a><a href="results.php">◉ Results</a><a href="../logout.php">↪ Logout</a>
